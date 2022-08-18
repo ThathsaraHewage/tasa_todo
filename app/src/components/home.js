@@ -1,7 +1,6 @@
 import "../App.css";
 import Base from "../core/base.js";
 import React, { useRef, useState } from "react";
-import PopupUpdate from "./update_popup";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 
