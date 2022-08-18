@@ -1,37 +1,41 @@
 import "../App.css";
 import Base from "../core/base.js";
 import React, { useRef, useState } from "react";
+import PopupUpdate from "./update_popup";
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
 function AddNewTask() {
-   const [title, setTitle] = useState("");
-   const [message, setMessage] = useState("");
-   const [tasks, setTasks] = useState([])
+       const [title, setTitle] = useState("");
+       const [message, setMessage] = useState("");
+       const [tasks, setTasks] = useState([])
 
-      const deleteAPIURL = "http://localhost:8000/task/list";
-      const delete_id = useRef(null);
-      const [deleteResult, setDeleteResult] = useState(null);
-      const fortmatResponse = (res) => {
-        return JSON.stringify(res, null, 2);
-      }
+          const baseURL = "http://localhost:8000/task";
+          const delete_id = useRef(null);
+          const [deleteResult, setDeleteResult] = useState(null);
+          const put_title = useRef(null);
+          const [putResult, setPutResult] = useState(null);
 
-    //display all tasks
-    const fetchData = () => {
-        fetch("http://localhost:8000/task")
-          .then(response => {
-            return response.json()
-          })
-          .then(data => {
-            setTasks(data)
-          })
-      }
+          const fortmatResponse = (res) => {
+            return JSON.stringify(res, null, 2);
+          }
 
-
+        //display all tasks
+        const fetchData = () => {
+            fetch(`${baseURL}`)
+              .then(response => {
+                return response.json()
+              })
+              .then(data => {
+                setTasks(data)
+              })
+          }
 
        //delete task
         async function deleteDataById(id) {
             if (id){
               try {
-                const res = await fetch(`${deleteAPIURL}/${id}`, { method: "delete" });
+                const res = await fetch(`${baseURL}/list/${id}`, { method: "delete" });
                 const data = await res.json();
                 const result = {
                   status: res.status + "-" + res.statusText,
@@ -45,10 +49,44 @@ function AddNewTask() {
             }
           }
 
+
+    //update a task
+      async function putData(id) {
+        if (id) {
+          const putData = {
+            title: put_title.current.value,
+          };
+          try {
+            const res = await fetch(`${baseURL}/list/${id}`, {
+              method: "patch",
+              headers: {
+                "Content-Type": "application/json",
+                "x-access-token": "token-value",
+              },
+              body: JSON.stringify(putData),
+            });
+            if (!res.ok) {
+              const message = `An error has occured: ${res.status} - ${res.statusText}`;
+              throw new Error(message);
+            }
+            const data = await res.json();
+            const result = {
+              status: res.status + "-" + res.statusText,
+              headers: { "Content-Type": res.headers.get("Content-Type") },
+              data: data,
+            };
+            setPutResult(fortmatResponse(result));
+          } catch (err) {
+            setPutResult(err.message);
+          }
+        }
+      }
+
+
     let handleSubmit = async (e) => {
         e.preventDefault();
         try {
-          let res = await fetch("http://localhost:8000/task/add", {
+          let res = await fetch(`${baseURL}/list/add`, {
             method: "POST",
             body: JSON.stringify({
               title: title,
@@ -101,10 +139,20 @@ function AddNewTask() {
                                 <td>{index + 1}</td>
                                 <td>{tasks.title}</td>
                                 <td>
-                                       <button onClick={() => {deleteDataById(tasks._id);}} className="btn btn-primary">
-                                                                   Edit
-                                                                 </button>
-                                                               </td>
+                                    <Popup trigger=
+                                        {
+                                             <button > Edit </button>
+                                        }position="right center"
+                                    >
+                                    <div>Edit your task</div>
+                                     <form onSubmit={putData(tasks._id)}>
+                                            <div className="form-group">
+                                              <input type="text" className="form-control" ref={put_title} placeholder="Edit Task" />
+                                            </div>
+                                       <button className="button" type="submit">Save Task</button>
+                                      </form>
+                                    </Popup>
+                                </td>
                                 <td>
                                   <button
                                     onClick={() => {deleteDataById(tasks._id);}}
@@ -120,33 +168,10 @@ function AddNewTask() {
                       </div>
                     </div>
                   </div>
-
-
-
-
-//            <ul>
-//              {tasks.map(task => (
-//              <table className="c">
-//                <tr >
-//                <td key={task.id}>{task.title} </td>
-//                <td>
-//                  <button type="button" className="editbutton">
-//                       Edit
-//                  </button>
-//                </td>
-//                <td>
-//                 <button type="button" className="deletebutton" onClick={deleteDataById}>
-//                    Done
-//                 </button>
-//               </td>
-//               </tr>
-//              </table>
-//              ))}
-//            </ul>
           )}
         </div>
-        </div>
-          </center>
+       </div>
+      </center>
     </Base>
   );
 }
