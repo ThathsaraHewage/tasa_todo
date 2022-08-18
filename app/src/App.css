@@ -12,7 +12,7 @@ input {
   font-weight: 500;
   margin-bottom: 2rem;
 }
-button {
+.button {
   border: none;
   padding: 1rem;
   width: 21.2rem;
@@ -20,6 +20,35 @@ button {
   border-radius: 0.2rem;
   cursor: pointer;
 }
+
+.deletebutton {
+   border: none;
+   padding: 1rem;
+   width: 10.2rem;
+   font-size: 1.0em;
+   border-radius: 0.1rem;
+   cursor: pointer;
+ background-color: #4CAF50;
+ }
+
+ .editbutton {
+    border: none;
+    padding: 1rem;
+    width: 10.2rem;
+    font-size: 1.0em;
+    border-radius: 0.1rem;
+    cursor: pointer;
+  background-color: #bd3a59;
+  }
+
+
+
+
+.c {
+  table-layout: fixed;
+  width: 80%;
+}
+
 button:hover {
   background-color: #c5c5c5;
 }
