@@ -1,11 +1,19 @@
-const express = require('express');
-const createError = require('http-errors');
 const dotenv = require('dotenv').config();
+const createError = require('http-errors');
+const express = require('express');
 
 const app = express();
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+//Middelware
+app.use(bodyParser.json())
+app.use(cookieParser());
+app.use(cors());
 
 // Initialize DB
 require('./database/initDB.js')();
@@ -33,3 +41,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('Server is running on port : ' + PORT + '...');
 });
+
